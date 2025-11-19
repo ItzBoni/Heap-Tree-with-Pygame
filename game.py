@@ -5,7 +5,7 @@ import math
 hp = hl.heapLogic()
 hp.agregar(67)
 hp.agregar(2004)
-
+hp.agregar(100)
 
 # pyGame setup
 pygame.init()
@@ -55,25 +55,6 @@ while running:
 
     # draw nodes (iterate starting at index 1 so heap uses 1-based indices)
     node_w, node_h = 100, 50
-
-    # draw edges (parent -> children) using computed positions
-    for idx in range(1, hp.tam+1):
-        parent_pos = positions[idx]
-        if parent_pos is None:
-            continue
-        px, py = parent_pos
-        # children indices in array-backed heap
-        for child_idx in (2 * idx, 2 * idx + 1):
-            if child_idx <= hp.tam and child_idx < len(positions):
-                child_pos = positions[child_idx]
-                if child_pos is None:
-                    continue
-                cx, cy = child_pos
-                # draw line from bottom-center of parent to top-center of child
-                start = (px, py + node_h // 2)
-                end = (cx, cy - node_h // 2)
-                pygame.draw.line(screen, (0, 0, 0), start, end, 3)
-
     for idx in range(1, hp.tam+1):
         pos = positions[idx]
         if pos is None:
