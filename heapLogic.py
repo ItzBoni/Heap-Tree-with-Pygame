@@ -9,7 +9,7 @@ class heapLogic:
     def __init__(self, capacity: int = 15):
         # capacity = número máximo de elementos activos que puede contener el heap
         self.capacity = capacity
-        self.monti = [0] * (capacity + 1)  # índice 0 no se usa
+        self.monti = [""] * (capacity + 1)  # índice 0 no se usa
         self.tam = 0
 
     def insertar(self, n):
