@@ -18,6 +18,11 @@ box_click = False
 text_box = pygame.Rect(0,680,100,40)
 color = pygame.Color('blue')
 
+#Input boxes:
+node_boxes = dict()
+node_click = False
+position_removed = None
+
 
 def compute_heap_positions(length, screen_width, top_margin=50, level_height=110, start_index=1):
     """Return a list of (x,y) positions for a heap stored in an array of given
@@ -50,11 +55,24 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        ##Chech if there has been a click
         if event.type == pygame.MOUSEBUTTONDOWN:
             if text_box.collidepoint(event.pos):
                 box_click = True
             else:
                 box_click = False
+
+            for pos, rect_value in node_boxes.items():
+                rect, value = rect_value
+                
+                if rect.collidepoint(event.pos):
+                    node_click = True
+                    position_removed = value
+                    break
+                else:
+                    node_click = False
+
         if event.type == pygame.KEYDOWN and box_click:
             if event.key == pygame.K_BACKSPACE:
                 user_input = user_input[:-1]
@@ -77,6 +95,7 @@ while running:
             continue
         x, y = pos
         rect = pygame.Rect(x - node_w // 2, y - node_h // 2, node_w, node_h)
+        node_boxes[pos] = (rect,hp.monti[idx])
         pygame.draw.rect(screen, (255, 255, 255), rect)  # fill
         pygame.draw.rect(screen, (0, 0, 0), rect, 3, 8)  # border rounded
 
@@ -85,11 +104,16 @@ while running:
         text_rect = text_surf.get_rect(center=rect.center)
         screen.blit(text_surf,text_rect)
 
+    if hp.tam == 0:
+        text_surf = font.render("Agrega un valor en el recuadro de abajo :)", True, "black")
+        screen.blit(text_surf, (450, 320))
+
     #Receive user input
     if box_click:
         color = pygame.Color('green')
     else:
         color = pygame.Color('blue')
+
     pygame.draw.rect(screen, color, text_box, 4)
     user_surf = font.render(user_input, True,'black')
     screen.blit(user_surf, (text_box.x + 5, text_box.y + 5))
@@ -100,6 +124,10 @@ while running:
         hp.agregar(num_to_add)
         num_to_add = None
 
+    #Remove from the heap
+    if node_click:
+        hp.quitar(position_removed)
+        position_removed = None
 
     pygame.display.flip()
     clock.tick(60)
